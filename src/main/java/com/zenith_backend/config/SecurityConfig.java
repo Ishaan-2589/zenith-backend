@@ -46,14 +46,23 @@ public class SecurityConfig {
         return http.build();
     }
 
-
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://127.0.0.1:5501", "http://localhost:5501"));
+
+        // CRITICAL: All your local ports AND your live Vercel domain are here
+        configuration.setAllowedOrigins(Arrays.asList(
+                "http://127.0.0.1:5500",
+                "http://localhost:5500",
+                "http://127.0.0.1:5501",
+                "http://localhost:5501",
+                "https://zenith-collectives.vercel.app"
+        ));
+
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
-        configuration.setAllowCredentials(true); // Required so authenticatedFetch can pass the JWT
+        // Using "*" allows all headers, preventing strict header blocks from Vercel
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
