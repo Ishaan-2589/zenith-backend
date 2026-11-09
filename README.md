@@ -1,127 +1,222 @@
-# ⚡ Zenith | E-Commerce & Payment Gateway Platform
+# Zenith Backend
 
-**Zenith** is a production-grade, full-stack E-Commerce platform featuring real-time authentication, dynamic cart management, and seamless end-to-end payment gateway integration via **Razorpay**.
+**Zenith** is the backend for a full-stack e-commerce marketplace. Built with Java and Spring Boot, it provides REST APIs for user authentication, product management, shopping cart operations, order processing, payments, and administrative functionality.
 
-Designed with modular backend API routes, secure cross-origin resource sharing (CORS), token-based authentication workflows, and cloud-hosted data persistence.
+The backend uses MySQL for data persistence and integrates with external services such as Razorpay, Cloudinary, and Gmail SMTP.
 
-## 🚀 Key Features
+## Features
 
-* **Authentication & Authorization**: Secure User Registration and Login flow powered by **JSON Web Tokens (JWT)** and **bcrypt** password hashing.
+### Authentication & User Management
+- User registration and login.
+- JWT-based authentication.
+- Password hashing using BCrypt.
+- Role-based authorization for administrative operations.
+- User profile retrieval and updates.
+- Welcome emails after registration.
 
-* **Dynamic Cart Operations**: Real-time state synchronization for adding, updating, and removing items, bound directly to authenticated user sessions.
+### Product Management
+- Retrieve all available products.
+- Fetch individual product details.
+- Search products.
+- Add, update, and delete products.
+- Upload product images using Cloudinary.
+- Restrict product management operations to administrators.
 
-* **Integrated Razorpay Checkout**: Fully functional payment gateway integration utilizing server-side order creation and client-side webhooks/callbacks.
+### Shopping Cart
+- Add products to the cart.
+- Retrieve the authenticated user's cart.
+- Remove products from the cart.
+- Associate cart items with individual users.
 
-* **Resilient Client Architecture**: Vanilla JavaScript SPA/PWA architecture with modular API layers, resilient token fallback handling, and real-time state listeners (`auth-expired`, dynamic cart re-renders).
+### Order Management
+- Place orders using cart items.
+- Retrieve customer order history.
+- Update order fulfillment status.
+- Track payment information.
+- Automatically update inventory when orders are placed.
+- Send order confirmation and status update emails.
 
-* **Production Deployment Ready**: Pre-configured cross-origin routing for seamless integration between isolated frontend and backend environments (e.g., Vercel, Render, Railway).
+### Payment Integration
+- Create Razorpay payment orders.
+- Verify payment signatures on the backend.
+- Store payment IDs and payment statuses.
+- Support Cash on Delivery through the order workflow.
 
-## 🛠️ Tech Stack
+### Admin Dashboard APIs
+- Retrieve dashboard statistics.
+- View inventory.
+- View customer orders.
+- Update order statuses.
+- Access financial transaction information.
 
-### Frontend
+## Technology Stack
 
-* **Core**: HTML5, CSS3, JavaScript (ES6+ Modules)
-* **Styling**: Tailwind CSS / Custom Responsive Layouts
-* **Payment SDK**: Razorpay Checkout JS SDK
+| Technology | Purpose |
+|---|---|
+| Java 17 | Backend programming language |
+| Spring Boot 4.0.5 | Application framework |
+| Spring Web MVC | REST API development |
+| Spring Security | Application security |
+| Spring Data JPA | Database operations |
+| MySQL | Relational database |
+| Hibernate | ORM |
+| JWT (JJWT) | Token-based authentication |
+| BCrypt | Password hashing |
+| Lombok | Boilerplate code reduction |
+| Cloudinary | Product image storage |
+| Razorpay | Payment gateway |
+| Spring Mail | Email notifications |
+| Maven | Dependency and build management |
 
-### Backend
+## Project Structure
 
-* **Runtime**: Node.js
-* **Framework**: Express.js
-* **Authentication**: JSON Web Tokens (`jsonwebtoken`), `bcryptjs`
-* **Security & Middleware**: `cors`, `dotenv`
-
-### Database & Hosting
-
-* **Database**: MongoDB / PostgreSQL / MySQL (Configurable ORM/ODM)
-* **Hosting Capabilities**: Serverless / Node Runtime (Vercel, Render, Railway, AWS)
-
-## 📂 Project Architecture
-
+```text
+zenith-backend/
+│
+├── src/
+│   ├── main/
+│   │   ├── java/com/zenith_backend/
+│   │   │   ├── config/          # Application configuration
+│   │   │   ├── controller/      # REST API controllers
+│   │   │   ├── exception/       # Exception handling
+│   │   │   ├── model/           # Entity classes
+│   │   │   ├── repository/      # Database access layer
+│   │   │   ├── security/        # JWT authentication
+│   │   │   ├── service/         # Business logic
+│   │   │   └── BackendApplication.java
+│   │   │
+│   │   └── resources/
+│   │       └── application.properties
+│   │
+│   └── test/
+│
+├── Dockerfile
+├── pom.xml
+├── mvnw
+└── mvnw.cmd
 ```
-Zenith/
-├── frontend/
-│   ├── index.html          # Storefront entry point
-│   ├── cart.html           # Dynamic user cart page
-│   ├── checkout.html       # Payment handling & verification page
-│   ├── css/                # Global styles and layout definitions
-│   └── js/
-│       ├── api.js          # Centralized API fetch wrapper & auth interceptors
-│       ├── cart.js         # Cart UI rendering & state management
-│       ├── checkout.js     # Razorpay SDK initialization & payload dispatch
-│       └── main.js         # Auth listeners and DOM orchestration
-└── backend/
-    ├── server.js           # Server entry point & Express configuration
-    ├── config/             # DB & payment credentials initializers
-    ├── middleware/         # JWT verification & CORS policy enforcement
-    ├── routes/
-    │   ├── auth.js         # Register / Login endpoint routes
-    │   ├── cart.js         # User cart CRUD routes
-    │   └── payment.js      # Razorpay order generation & signature verification
-    └── models/             # Schema definitions
-```
 
-## ⚙️ Environment Variables
+## API Overview
 
-To run Zenith locally or in production, configure the following variables in your server environments:
+The backend exposes REST endpoints under the `/api` namespace.
 
-### Backend (`.env`)
+| Module | Endpoint | Description |
+|---|---|---|
+| Users | `/api/users` | Register and retrieve users |
+| Authentication | `/api/login` | Authenticate users |
+| User Profile | `/api/users/me` | Retrieve and update profile |
+| Products | `/api/products` | Retrieve and manage products |
+| Product Search | `/api/products/search` | Search products |
+| Cart | `/api/cart` | Add, retrieve and remove cart items |
+| Orders | `/api/orders` | Place orders and retrieve order history |
+| Payments | `/api/payment/create-order` | Create Razorpay orders |
+| Payments | `/api/payment/verify-payment` | Verify payment signatures |
 
-```env
-PORT=5000
-MONGODB_URI=your_database_connection_string
-JWT_SECRET=your_jwt_super_secret_key
+Administrative endpoints are also available for inventory, order management, dashboard statistics, and financial information.
 
-# Razorpay Keys
-RAZORPAY_KEY_ID=your_razorpay_key_id
-RAZORPAY_KEY_SECRET=your_razorpay_key_secret
+## Getting Started
 
-# CORS Settings
-ALLOWED_ORIGIN=https://your-frontend-domain.vercel.app
-```
+### Prerequisites
 
-### Frontend Configuration
-
-Ensure your API base URL point in `frontend/js/api.js` points to your backend URL:
-
-```javascript
-export const API_BASE_URL = "https://your-backend-api.onrender.com/api";
-```
-
-## 🚦 Quick Start Guide
+- Java Development Kit (JDK) 17 or later
+- MySQL Server
+- Git
+- Maven (optional, as Maven Wrapper is included)
 
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/zenith.git
-cd zenith
+git clone https://github.com/Ishaan-2589/zenith-backend.git
+cd zenith-backend
 ```
 
-### 2. Setup & Start Backend
+### 2. Create the Database
+
+Create a MySQL database:
+
+```sql
+CREATE DATABASE zenith;
+```
+
+### 3. Configure Environment Variables
+
+The application reads its configuration from environment variables.
+
+Configure the following variables:
+
+```env
+DB_URL=jdbc:mysql://localhost:3306/zenith
+DB_USERNAME=your_mysql_username
+DB_PASSWORD=your_mysql_password
+
+EMAIL_USER=your_email@gmail.com
+EMAIL_PASSWORD=your_email_app_password
+
+CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+
+RAZORPAY_KEY_ID=your_razorpay_key_id
+RAZORPAY_KEY_SECRET=your_razorpay_key_secret
+```
+
+Use your own credentials. Do not commit passwords, API secrets, or other sensitive configuration values to GitHub.
+
+### 4. Run the Application
+
+On Windows:
 
 ```bash
-cd backend
-npm install
-npm start
+mvnw.cmd spring-boot:run
 ```
 
-*The backend server should now be running on `http://localhost:5000`.*
-
-### 3. Setup & Launch Frontend
-
-You can serve the `frontend/` directory using any static file server, Live Server (VS Code extension), or standard HTTP server:
+On macOS/Linux:
 
 ```bash
-cd ../frontend
-npx serve .
+./mvnw spring-boot:run
 ```
 
-## 🔒 Security Best Practices Implemented
+The backend starts on:
 
-1. **Bearer Token Authorization**: Sensitive endpoints are protected via `Authorization: Bearer <token>` middleware verification.
-2. **Dynamic Session Expiry Handling**: Client automatically clears expired tokens and dispatches global auth events upon `401 Unauthorized` responses.
-3. **Environment Security**: Sensitive operational keys (Razorpay secrets, database strings, JWT signatures) are kept off client bundles and injected at runtime via environment configuration.
+```text
+http://localhost:8080
+```
 
-## 📝 License
+You can check whether the server is running by visiting:
 
-Distributed under the MIT License. See `LICENSE` for more information.
+```text
+http://localhost:8080/
+```
+
+## Docker
+
+The repository includes a Dockerfile.
+
+Build the image:
+
+```bash
+docker build -t zenith-backend .
+```
+
+Run the container:
+
+```bash
+docker run -p 8080:8080 zenith-backend
+```
+
+Ensure the required environment variables and database connectivity are configured.
+
+## Related Repository
+
+**Frontend:** [Zenith Frontend](https://github.com/Ishaan-2589/zenith-frontend)
+
+## Future Improvements
+
+- Expanded automated test coverage.
+- Improved API documentation.
+- Enhanced validation and exception handling.
+- Further security and deployment improvements.
+
+---
+
+**Zenith Backend** — powering the server-side operations of the Zenith marketplace.
